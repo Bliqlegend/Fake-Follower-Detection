@@ -4,7 +4,7 @@ Idea : `Fake Followers Detector for twitter`
 Algo :
 		>> `To check for apt profile picture.` --> `3/10`
 			Check if the profile pic has a face ,using OPENCV.
-			if the pfp has no face we will consider it as red flag. False	
+			if the pfp has no face we will consider it as red flag. False\n	
 		>> `To check for Regularity of tweets`(also shows and checks retweets) --> `6/10` 
 			We will fetch the data acc to 
 				tweets in a day, tweets in a week and tweets in a month
