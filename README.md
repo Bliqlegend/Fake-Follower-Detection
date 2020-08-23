@@ -25,10 +25,10 @@ Algo :
 >> `Bio` --> `3/10`
 			Bio should be Null. --> Red Flag.
 >> `Username` --> `2/10`
-			if username contains either of surname or real name --> Green Flag.
-			If username is really odd i.e. greater than > 8. --> Red Flag.
+			if username contains either of surname or real name gives outGreen Flag.
+			If username is really odd i.e. greater than > 8 gives out Red Flag.
 >> `Twitter Bot autotweet` --> `10/10`
-			should be written for sure as twitter generates it --> Red Flag.
+			should be written for sure as twitter generates it gives out Red Flag.
 
 Tech Used : 
 >> `Python`,`Selenium`, `OpenCV`
