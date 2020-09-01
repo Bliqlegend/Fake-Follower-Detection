@@ -1,5 +1,6 @@
 import tweepy
 import time
+import datetime
 import keys
 auth=tweepy.OAuthHandler(keys.consumer_key,keys.consumer_secret)
 auth.set_access_token(keys.access_token,keys.access_token_secret)
@@ -17,6 +18,12 @@ def profilephoto(username):
     user=api.get_user(username)
     print(user.profile_image_url)
 
+def media(username):
+    user=api.get_user(username)
+    status=api.user_timeline(user.id)
+    for i in status:
+        print(i.created_at)
+
 name=input("ENTER USERNAME:")
 try:
     api.verify_credentials()
@@ -31,3 +38,4 @@ except:
 
 follower_following(name)
 profilephoto(name)
+media(name)
