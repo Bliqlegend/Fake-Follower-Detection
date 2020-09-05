@@ -75,6 +75,8 @@ def regularity(username):
         .astype('datetime64[s]'))
         mean_tweet=datetime.strptime(str(mean_tweet),'%Y-%m-%dT%H:%M:%S')
         print(now-mean_tweet)
+    else:
+        print("RED")
     if(len(dates_retweet)!=0):
         mean_retweet = (np.array(dates_retweet, dtype='datetime64[s]')
         .view('i8')
@@ -82,6 +84,15 @@ def regularity(username):
         .astype('datetime64[s]'))
         mean_retweet=datetime.strptime(str(mean_retweet),'%Y-%m-%dT%H:%M:%S')
         print(now-mean_retweet)
+        time=now-mean_retweet
+        if(int(str(time).split()[0])<30):
+            print("GREEN")
+        else:
+            print("RED")
+
+
+
+
 
 def source(username):
     user=api.get_user(username)
@@ -89,8 +100,34 @@ def source(username):
     if status[0].source=='twitter bot autotweet':
         print("Confirm bot")
         quit()
+    else:
+        print("GREEN")
 
-    
+def hashtag(username):
+    tweets=api.user_timeline(username)
+    hashtag=list()
+    for i in tweets:
+        count=0
+        if "RT" not in i.text:
+            for j in i.text:
+                if j=='#':
+                    count+=1
+            hashtag.append(count)
+    hashtag=np.array(hashtag)
+    if int(hashtag.mean()<10):
+        print("GREEN")
+    else:
+        print("RED")
+
+def repetation(username):
+    tweets=api.user_timeline(username)
+    rep=list()
+    for i in tweets:
+        rep.append(i.text)
+    if len(rep)!=len(set(rep)):
+        print("RED")
+    else:
+        print("GREEN")
 
 name=input("ENTER USERNAME:")
 try:
@@ -115,4 +152,6 @@ try:
     bannerphoto(name)
 except:
     print("RED")
+repetation(name)
 regularity(name)
+hashtag(name)
