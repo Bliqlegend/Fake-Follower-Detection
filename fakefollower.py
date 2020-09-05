@@ -23,6 +23,8 @@ def follower_following(username):
     ratio=followers*50//following
     if ratio > 1:
         print("GREEN")
+    else:
+        print("RED")
 
 def facedetection(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -94,9 +96,6 @@ def regularity(username):
             print("RED")
 
 
-
-
-
 def source(username):
     user=api.get_user(username)
     status=api.user_timeline(user.id)
@@ -134,36 +133,36 @@ def repetation(username):
 
 def bio(username):
     user=api.get_user(username)
-    #print(user)
     if user.description=='' or 'bot' in user.description:
         print("RED")
     else:
         print('GREEN')
+if __name__=='__main__':
 
-name=input("ENTER USERNAME:")
-try:
-    api.verify_credentials()
-except:
-    print("Some problem occured")
-    quit()
-try:
-    api.get_user(name)
-except:
-    print("User not found")
-    quit()
+    name=input("ENTER USERNAME:")
+    try:
+        api.verify_credentials()
+    except:
+        print("Some problem occured")
+        quit()
+    try:
+        api.get_user(name)
+    except:
+        print("User not found")
+        quit()
 
-source(name)
-follower_following(name)
+    source(name)
+    follower_following(name)
 
-try:
-    profilephoto(name)
-except:
-    print("RED")
-try:
-    bannerphoto(name)
-except:
-    print("RED")
-repetation(name)
-regularity(name)
-hashtag(name)
-bio(name)
+    try:
+        profilephoto(name)
+    except:
+        print("RED")
+    try:
+        bannerphoto(name)
+    except:
+        print("RED")
+    repetation(name)
+    regularity(name)
+    hashtag(name)
+    bio(name)
