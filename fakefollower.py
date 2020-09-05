@@ -74,7 +74,11 @@ def regularity(username):
         .mean()
         .astype('datetime64[s]'))
         mean_tweet=datetime.strptime(str(mean_tweet),'%Y-%m-%dT%H:%M:%S')
-        print(now-mean_tweet)
+        time=now-mean_tweet
+        if(int(str(time).split()[0])<30):
+            print("GREEN")
+        else:
+            print("RED")
     else:
         print("RED")
     if(len(dates_retweet)!=0):
@@ -83,7 +87,6 @@ def regularity(username):
         .mean()
         .astype('datetime64[s]'))
         mean_retweet=datetime.strptime(str(mean_retweet),'%Y-%m-%dT%H:%M:%S')
-        print(now-mean_retweet)
         time=now-mean_retweet
         if(int(str(time).split()[0])<30):
             print("GREEN")
@@ -129,6 +132,14 @@ def repetation(username):
     else:
         print("GREEN")
 
+def bio(username):
+    user=api.get_user(username)
+    #print(user)
+    if user.description=='' or 'bot' in user.description:
+        print("RED")
+    else:
+        print('GREEN')
+
 name=input("ENTER USERNAME:")
 try:
     api.verify_credentials()
@@ -155,3 +166,4 @@ except:
 repetation(name)
 regularity(name)
 hashtag(name)
+bio(name)
