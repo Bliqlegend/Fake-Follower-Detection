@@ -7,6 +7,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import cv2
+from termcolor import cprint,colored
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_eye.xml')
@@ -16,13 +17,27 @@ auth.set_access_token(keys.access_token,keys.access_token_secret)
 api=tweepy.API(auth,wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
 
 
+def url_linked(username):
+    l_url = []
+    user = api.get_user(username)
+    url_user = user.url
+    r = requests.get(url_user) 
+    ele = r.url
+    l_url.append(ele)
+    cprint("[+]",'cyan')
+    cprint("Found Url's",'green')
+    for i in l_url:
+      cprint("[*]",'yellow')
+      cprint(i,'cyan')
+
 def follower_following(username):
     user=api.get_user(username)
     followers=user.followers_count
     following=user.friends_count
     ratio=followers*50//following
     if ratio > 1:
-        print("GREEN")
+        cprint("[+]",'magenta')
+        cprint("Profile Photo seems Legit",'green')
 
 def facedetection(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -40,9 +55,11 @@ def profilephoto(username):
     image = cv2.resize(image, (400, 700)) 
     val=facedetection(image)
     if(val):
-        print("GREEN")
+        cprint("[+]",'magenta')
+        cprint("Profile Photo seems Legit",'green')
     else:
-        print("RED")
+        cprint("[-]",'cyan')
+        cprint("Profile Photo Doesn't seem legit",'red')
 
 def bannerphoto(username):
     user=api.get_user(username)
@@ -52,9 +69,11 @@ def bannerphoto(username):
     image = cv2.resize(image, (400, 700)) 
     val=facedetection(image)
     if(val):
-        print("GREEN")
+        cprint("[+]",'magenta')
+        cprint("Banner Photo seems Legit",'green')
     else:
-        print("RED")
+        cprint("[-]",'cyan')
+        cprint("Banner Photo Doesn't seem legit",'red')
 
 def regularity(username):
     now=datetime.now()
@@ -74,6 +93,8 @@ def regularity(username):
         .mean()
         .astype('datetime64[s]'))
         mean_tweet=datetime.strptime(str(mean_tweet),'%Y-%m-%dT%H:%M:%S')
+        cprint('[*]','cyan')
+        cprint('Frequency of tweets :','yellow')
         print(now-mean_tweet)
     if(len(dates_retweet)!=0):
         mean_retweet = (np.array(dates_retweet, dtype='datetime64[s]')
@@ -81,6 +102,8 @@ def regularity(username):
         .mean()
         .astype('datetime64[s]'))
         mean_retweet=datetime.strptime(str(mean_retweet),'%Y-%m-%dT%H:%M:%S')
+        cprint('[*]','cyan')
+        cprint('Frequency of retweets :','yellow')
         print(now-mean_retweet)
 
 def source(username):
@@ -90,9 +113,15 @@ def source(username):
         print("Confirm bot")
         quit()
 
-    
+def output_beautify():
+  return 0
 
-name=input("ENTER USERNAME:")
+def likes_freq(username):
+  #to be completed
+  return 0
+
+cprint("Enter the Username to test : ",'yellow')
+name= input()
 try:
     api.verify_credentials()
 except:
@@ -105,14 +134,29 @@ except:
     quit()
 
 source(name)
+#follower_following
+
 follower_following(name)
 
 try:
+#photo
     profilephoto(name)
 except:
-    print("RED")
+    cprint("[-]",'cyan')
+    cprint("Profile Picture Doesn't seem legit",'red')
+
 try:
+#Banner Photo
     bannerphoto(name)
 except:
-    print("RED")
+    cprint("[-]",'cyan')
+    cprint("Banner Photo Doesn't seem legit",'red')
+#regularity
 regularity(name)
+
+#url_linked
+try:
+  url_linked(name)
+except:
+    cprint("[-]",'cyan')
+    cprint("User Doesn't Seem to contain any Url's",'red')
