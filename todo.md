@@ -1,10 +1,13 @@
 # TODO
 
+##completed
 > Change the appearence
 
 > Add URL fetcher
 
 > Add likes regularity Checker
+
+##left
 
 > DM the as a bot to check for immediate Response
 
@@ -12,6 +15,10 @@
 
 > some presentation and clarity in regularity function
 
-> More presentaion changes 
-
 > Simple JSON extension and usage
+
+> part of public lists
+
+> Check verified and protected
+
+> Check for default prof picture and default profile

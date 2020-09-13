@@ -16,6 +16,7 @@ auth=tweepy.OAuthHandler(keys.consumer_key,keys.consumer_secret)
 auth.set_access_token(keys.access_token,keys.access_token_secret)
 api=tweepy.API(auth,wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
 
+univ_flag = 0
 
 def url_linked(username):
     l_url = []
@@ -60,6 +61,7 @@ def profilephoto(username):
     else:
         cprint("[-]",'cyan')
         cprint("Profile Photo Doesn't seem legit",'red')
+        univ_flag+=1
 
 def bannerphoto(username):
     user=api.get_user(username)
@@ -74,6 +76,8 @@ def bannerphoto(username):
     else:
         cprint("[-]",'cyan')
         cprint("Banner Photo Doesn't seem legit",'red')
+        univ_flag+=1
+        
 
 def regularity(username):
     now=datetime.now()
@@ -110,16 +114,39 @@ def source(username):
     user=api.get_user(username)
     status=api.user_timeline(user.id)
     if status[0].source=='twitter bot autotweet':
-        print("Confirm bot")
+        cprint("[-] Account is a Confirmed bot",'red')
         quit()
 
-def output_beautify():
-  return 0
 
 def likes_freq(username):
-  #to be completed
-  return 0
+    user = api.get_user(username)
+    fav = user.favourites_count 
+    time = user.created_at
+    cprint(f"Account Created {time.day}th of {time.month} in {time.year}",'green')
+    rn  = datetime.now()
+    deff = rn - time
+    total_days = deff.days
+    check_flag = 1
+    if fav <= total_days/total_days:
+        check_flag = 0
+        cprint("[-]",'cyan')
+        cprint("Likes rate is too low",'red')
+    if fav == total_days:
+        check_flag = 1
+    if fav > 50*total_days:
+        check_flag = 0
+        cprint("[-]",'cyan')
+        cprint("Likes rate is too high",'red')
 
+    if check_flag == 1:
+        cprint("[+]",'magenta')
+        cprint("Likes Seem to be in Order",'green')
+    else:
+        cprint("[-]",'cyan')
+        cprint("Likes Don't Seem to be in Order",'red')
+        univ_flag+=1
+
+#main
 cprint("Enter the Username to test : ",'yellow')
 name= input()
 try:
@@ -144,6 +171,8 @@ try:
 except:
     cprint("[-]",'cyan')
     cprint("Profile Picture Doesn't seem legit",'red')
+    univ_flag+=1
+
 
 try:
 #Banner Photo
@@ -151,6 +180,8 @@ try:
 except:
     cprint("[-]",'cyan')
     cprint("Banner Photo Doesn't seem legit",'red')
+    univ_flag+=1
+
 #regularity
 regularity(name)
 
@@ -160,3 +191,7 @@ try:
 except:
     cprint("[-]",'cyan')
     cprint("User Doesn't Seem to contain any Url's",'red')
+
+likes_freq(name)
+
+cprint(f'This Account got {univ_flag} red flag','red')
