@@ -11,6 +11,8 @@ import cv2
 from termcolor import cprint,colored
 app=Flask(__name__)
 
+# Importing all libraries etc
+
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_eye.xml')
 
@@ -18,8 +20,11 @@ auth=tweepy.OAuthHandler(keys.consumer_key,keys.consumer_secret)
 auth.set_access_token(keys.access_token,keys.access_token_secret)
 api=tweepy.API(auth,wait_on_rate_limit=True,wait_on_rate_limit_notify=True)
 
+# API keys into vars
+
 univ_flag = 0
 result={}
+
 
 def url_linked(username):
     global result
@@ -36,6 +41,8 @@ def url_linked(username):
       cprint("[*]",'yellow')
       cprint(i,'cyan')
       result['url_linked']+=[i]
+    
+# We are calculating a ratio of followers and following, If the ratio is less than 1/50 then increments bot probability 
 
 def follower_following(username):
     global result
@@ -50,6 +57,7 @@ def follower_following(username):
     else:
         result['follower_following']='Followers/Following does not seem Legit'
 
+
 def facedetection(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.03, 5)
@@ -57,6 +65,8 @@ def facedetection(image):
         return True
     else:
         return False
+
+# Checking if the profile photo has a face or not using opencv's face detection function
 
 def profilephoto(username):
     global univ_flag
@@ -77,6 +87,9 @@ def profilephoto(username):
         result['profile_photo']='Profile Photo does not seem Legit'
         univ_flag+=1
 
+# Checking if the banner photo has a face or not using opencv's face detection function
+
+
 def bannerphoto(username):
     global result
     global univ_flag
@@ -96,6 +109,9 @@ def bannerphoto(username):
         result['cover_photo']='Cover Photo seems Legit'
         univ_flag+=1
         
+
+# Checking frequency of tweets and retweets using datetime module , comparing the time and making an array.
+
 def regularity(username):
     global univ_flag
     global result
@@ -119,6 +135,8 @@ def regularity(username):
         cprint('[*]','cyan')
         cprint('Frequency of tweets :','yellow')
         print(now-mean_tweet)
+        print(type(now-mean_tweet))
+        #if(type(now-mean_tweet))
         result['dates_tweet']=str(now-mean_tweet)
     else:
         result['dates_tweet']='No tweets found'
@@ -132,22 +150,25 @@ def regularity(username):
         mean_retweet=datetime.strptime(str(mean_retweet),'%Y-%m-%dT%H:%M:%S')
         cprint('[*]','cyan')
         cprint('Frequency of retweets :','yellow')
-        print(now-mean_retweet)
+        z=now-mean_retweet
         result['dates_retweet']=str(now-mean_retweet)
     else:
         result['dates_retweet']='No retweets found'
 
+# Source of tweetv which means from which platform or device the tweet is done, if it is anything other than these 3 , then we increment the probability 
+
 def source(username):
     global result
+    global univ_flag
     user=api.get_user(username)
     status=api.user_timeline(user.id)
-    if status[0].source=='twitter bot autotweet':
-        cprint("[-] Account is a Confirmed bot",'red')
-        result['source']='twitter bot autotweet'
-        return result
+    if status[0].source=='Twitter for iPhone' or status[0].source=='Twitter for Android' or status[0].source=='Twitter for Web':
+        result['source']=status[0].source
     else:
         result['source']=status[0].source
+        univ_flag=univ_flag+1
 
+# checking the frequency of user likes, by comparing total likes by the acc, time acc was created and total days between account created and now. 
 
 def likes_freq(username):
     global univ_flag
@@ -161,12 +182,10 @@ def likes_freq(username):
     deff = rn - time
     total_days = deff.days
     check_flag = 1
-    if fav <= total_days/total_days:
+    if fav <= total_days/10:
         check_flag = 0
         cprint("[-]",'cyan')
         cprint("Likes rate is too low",'red')
-    if fav == total_days:
-        check_flag = 1
     if fav > 50*total_days:
         check_flag = 0
         cprint("[-]",'cyan')
@@ -240,6 +259,8 @@ def main(name):
     result=dict()
     univ_flag=0
     return final_result
+
+# Quering the apicall url on localhost , passing the username to give results out to use in JSON format.
 
 @app.route('/apicall',methods=['GET'])
 def apicall():
