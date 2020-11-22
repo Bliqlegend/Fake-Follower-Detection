@@ -119,6 +119,8 @@ def regularity(username):
         cprint('[*]','cyan')
         cprint('Frequency of tweets :','yellow')
         print(now-mean_tweet)
+        print(type(now-mean_tweet))
+        #if(type(now-mean_tweet))
         result['dates_tweet']=str(now-mean_tweet)
     else:
         result['dates_tweet']='No tweets found'
@@ -132,22 +134,21 @@ def regularity(username):
         mean_retweet=datetime.strptime(str(mean_retweet),'%Y-%m-%dT%H:%M:%S')
         cprint('[*]','cyan')
         cprint('Frequency of retweets :','yellow')
-        print(now-mean_retweet)
+        z=now-mean_retweet
         result['dates_retweet']=str(now-mean_retweet)
     else:
         result['dates_retweet']='No retweets found'
 
 def source(username):
     global result
+    global univ_flag
     user=api.get_user(username)
     status=api.user_timeline(user.id)
-    if status[0].source=='twitter bot autotweet':
-        cprint("[-] Account is a Confirmed bot",'red')
-        result['source']='twitter bot autotweet'
-        return result
+    if status[0].source=='Twitter for iPhone' or status[0].source=='Twitter for Android' or status[0].source=='Twitter for Web':
+        result['source']=status[0].source
     else:
         result['source']=status[0].source
-
+        univ_flag=univ_flag+1
 
 def likes_freq(username):
     global univ_flag
